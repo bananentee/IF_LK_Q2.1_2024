@@ -6,13 +6,7 @@ public class Ahnenbaum {
         new Ahnenbaum();
     }
 
-    BinaryTree<String> llw;
-    BinaryTree<String> lrw;
-    BinaryTree<String> rlw;
-    BinaryTree<String> rrw;
-    BinaryTree<String> lw;
-    BinaryTree<String> rw;
-    BinaryTree<String> lisasAhnenbaum;
+    BinaryTree<String> llw, lrw, rlw, rrw, lw, rw, lisasAhnenbaum;
 
     Ahnenbaum() {
         llw = new BinaryTree<>("Jacqueline Bouvier");
@@ -71,7 +65,5 @@ public class Ahnenbaum {
         }
         System.out.println(b.getContent());
     }
-
-
 
 }
