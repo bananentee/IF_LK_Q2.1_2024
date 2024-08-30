@@ -24,20 +24,52 @@ public class Ahnenbaum {
         lisasAhnenbaum = new BinaryTree<>("Lisa Simpson",lw,rw);
 
         preOrderAusgabe();
+        System.out.println("");
+        inOrderAusgabe();
+        System.out.println("");
+        postOrderAusgabe();
     }
 
     public void preOrderAusgabe() {
-        search(lisasAhnenbaum);
+        preSearch(lisasAhnenbaum);
     }
 
-    private void search(BinaryTree<String> b) {
+    private void preSearch(BinaryTree<String> b) {
         System.out.println(b.getContent());
         if (!b.getLeftTree().isEmpty()) {
-            search(b.getLeftTree());
+            preSearch(b.getLeftTree());
         }
         if (!b.getRightTree().isEmpty()) {
-            search(b.getRightTree());
+            preSearch(b.getRightTree());
         }
+    }
+
+    public void inOrderAusgabe() {
+        inSearch(lisasAhnenbaum);
+    }
+
+    private void inSearch(BinaryTree<String> b) {
+        if (!b.getLeftTree().isEmpty()) {
+            inSearch(b.getLeftTree());
+        }
+        System.out.println(b.getContent());
+        if (!b.getRightTree().isEmpty()) {
+            inSearch(b.getRightTree());
+        }
+    }
+
+    public void postOrderAusgabe() {
+        postSearch(lisasAhnenbaum);
+    }
+
+    private void postSearch(BinaryTree<String> b) {
+        if (!b.getLeftTree().isEmpty()) {
+            postSearch(b.getLeftTree());
+        }
+        if (!b.getRightTree().isEmpty()) {
+            postSearch(b.getRightTree());
+        }
+        System.out.println(b.getContent());
     }
 
 
