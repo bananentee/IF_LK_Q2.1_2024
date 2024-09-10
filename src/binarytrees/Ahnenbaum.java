@@ -7,6 +7,7 @@ public class Ahnenbaum {
     }
 
     BinaryTree<String> llw, lrw, rlw, rrw, lw, rw, lisasAhnenbaum;
+    private int i;
 
     Ahnenbaum() {
         llw = new BinaryTree<>("Jacqueline Bouvier");
@@ -22,6 +23,7 @@ public class Ahnenbaum {
         inOrderAusgabe();
         System.out.println("");
         postOrderAusgabe();
+        countAusgabe();
     }
 
     public void preOrderAusgabe() {
@@ -64,6 +66,22 @@ public class Ahnenbaum {
             postSearch(b.getRightTree());
         }
         System.out.println(b.getContent());
+    }
+
+    public void countAusgabe() {
+        i = 0;
+        count(lisasAhnenbaum);
+        System.out.println(i);
+    }
+
+    private void count(BinaryTree<String> b) {
+        if (!b.getLeftTree().isEmpty()) {
+            count(b.getLeftTree());
+        }
+        if (!b.getRightTree().isEmpty()) {
+            count(b.getRightTree());
+        }
+        i++;
     }
 
 }
