@@ -3,11 +3,11 @@
  * @version
  */
 
-package binarytrees;
+package binarytrees.pferd;
 
 import java.awt.*;
 
-public class Pferd implements ComparableContent{
+public class Pferd implements ComparableContent<ComparableContent> {
 
     /* static variables */
 

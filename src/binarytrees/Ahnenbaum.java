@@ -1,5 +1,7 @@
 package binarytrees;
 
+import binarytrees.abiklassen.BinaryTree;
+
 public class Ahnenbaum {
 
     public static void main(String[] args) {
@@ -19,9 +21,9 @@ public class Ahnenbaum {
         lisasAhnenbaum = new BinaryTree<>("Lisa Simpson",lw,rw);
 
         preOrderAusgabe();
-        System.out.println("");
+        System.out.println();
         inOrderAusgabe();
-        System.out.println("");
+        System.out.println();
         postOrderAusgabe();
         countAusgabe();
     }
