@@ -1,4 +1,4 @@
-package binarytrees.abiklassen;
+package abiklassen;
 
 /**
  * <p>
