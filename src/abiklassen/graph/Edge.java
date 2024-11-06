@@ -1,4 +1,4 @@
-package abiklassen;
+package abiklassen.graph;
 
 /**
  * <p>

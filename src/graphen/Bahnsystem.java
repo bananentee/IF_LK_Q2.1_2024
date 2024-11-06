@@ -1,8 +1,8 @@
 package graphen;
 
-import abiklassen.Edge;
-import abiklassen.Graph;
-import abiklassen.Vertex;
+import abiklassen.graph.Edge;
+import abiklassen.graph.Graph;
+import abiklassen.graph.Vertex;
 
 public class Bahnsystem {
 

@@ -1,4 +1,6 @@
-package abiklassen;
+package abiklassen.graph;
+
+import abiklassen.List;
 
 /**
  * <p>

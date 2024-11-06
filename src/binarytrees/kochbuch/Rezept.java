@@ -1,6 +1,6 @@
 package binarytrees.kochbuch;
 
-import abiklassen.ComparableContent;
+import abiklassen.binarytree.ComparableContent;
 import abiklassen.List;
 
 public class Rezept implements ComparableContent<Rezept> {
