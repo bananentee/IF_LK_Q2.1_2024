@@ -1,9 +1,5 @@
 package server.cryptography;
 
-import abiklassen.List;
-
-import java.util.ArrayList;
-
 public class Monoalphabetic {
 
     public static void main(String[] args) {
@@ -12,7 +8,7 @@ public class Monoalphabetic {
         System.out.println(new Monoalphabetic().decode(new Monoalphabetic().encode("hallo was machen sachen","CODEE"), "CODEE"));
     }
 
-    private char[] alphabet = new char[26];
+    private final char[] alphabet = new char[26];
 
     Monoalphabetic() {
         alphabet[0] = 'A';
@@ -70,13 +66,12 @@ public class Monoalphabetic {
     }
 
     private char[] createCodeAlphabet(String code) {
-        StringBuilder codeBuilder = new StringBuilder(removeDuplicates(code));
-        for (int i = 0; i < alphabet.length; i++) {
-            if (!codeBuilder.toString().contains(String.valueOf(alphabet[i]))) {
-                codeBuilder.append(alphabet[i]);
+        code = removeDuplicates(code);
+        for (char c : alphabet) {
+            if (!code.contains(String.valueOf(c))) {
+                code += c;
             }
         }
-        code = codeBuilder.toString();
         return code.toCharArray();
     }
 
