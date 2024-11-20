@@ -4,9 +4,8 @@ import abiklassen.List;
 import abiklassen.network.Server;
 
 /**
- * 
+ * @author Sven Ibe
  * @author Michel May
- *
  */
 public class AuskunftServer extends Server {
 
@@ -38,8 +37,8 @@ public class AuskunftServer extends Server {
      * Diese Methode wird beim Herstellen einer neuen Verbindung aufgerufen, muss jedoch nichts weiter leisten. Aus
      * diesem Grund wird lediglich eine kurze Nachricht auf der Konsole ausgegeben.
      * 
-     * @param pClientIP
-     * @param pClientPort
+     * @param pClientIP Die IP des Clients.
+     * @param pClientPort Der Port des Clients.
      */
     @Override
     public void processNewConnection(String pClientIP, int pClientPort) {
@@ -53,12 +52,9 @@ public class AuskunftServer extends Server {
      * Diese Methode bildet den Kern der Klasse <code>AuskunftServer</code>. Hier wird auf die verschiedenen Anfragen
      * der Clients entsprechend reagiert.
      * 
-     * @param pClientIP
-     *            Die IP des Clients.
-     * @param pClientPort
-     *            Der Port des Clients.
-     * @param pMessage
-     *            Die vom Client übersendete Nachricht.
+     * @param pClientIP Die IP des Clients.
+     * @param pClientPort Der Port des Clients.
+     * @param pMessage Die vom Client übersendete Nachricht.
      */
     @Override
     public void processMessage(String pClientIP, int pClientPort, String pMessage) {
@@ -116,8 +112,8 @@ public class AuskunftServer extends Server {
      * Diese Methode wird beim Beenden einer bestehenden Verbindung aufgerufen, muss jedoch nichts weiter leisten. Aus
      * diesem Grund wird lediglich eine kurze Nachricht auf der Konsole ausgegeben.
      * 
-     * @param pClientIP
-     * @param pClientPort
+     * @param pClientIP Die IP des Clients.
+     * @param pClientPort Der Port des Clients.
      */
     @Override
     public void processClosingConnection(String pClientIP, int pClientPort) {

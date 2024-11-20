@@ -75,7 +75,7 @@ public class Monoalphabetic {
         return code.toCharArray();
     }
 
-    private String removeDuplicates(String input) {
+    private String removeDuplicates(String input) { //@gpt
         String result = "";
         // Durchlaufe jedes Zeichen im Eingabestring
         for (int i = 0; i < input.length(); i++) {
