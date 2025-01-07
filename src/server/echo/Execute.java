@@ -22,7 +22,7 @@ public class Execute {
         while(true){
             EchoServer server = new EchoServer(8000);
             EchoClient client = new EchoClient("localhost", 8000);
-//            client.send("hallo");
+            client.send("hallo");
         }
 
 //        client.close();

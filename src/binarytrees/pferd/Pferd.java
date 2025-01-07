@@ -7,7 +7,7 @@ package binarytrees.pferd;
 
 import java.awt.*;
 
-public class Pferd implements ComparableContent<ComparableContent> {
+public class Pferd implements ComparableContentPferd<ComparableContentPferd> {
 
     /* static variables */
 

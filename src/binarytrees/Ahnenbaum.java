@@ -1,6 +1,6 @@
 package binarytrees;
 
-import abiklassen.binarytree.BinaryTree;
+import abiklassen.bin_tree.BinaryTree;
 
 public class Ahnenbaum {
 

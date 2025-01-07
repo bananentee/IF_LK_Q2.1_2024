@@ -1,6 +1,6 @@
 package binarytrees.pferd;
 
-public interface ComparableContent<C extends ComparableContent> {
+public interface ComparableContentPferd<C extends ComparableContentPferd> {
 
     boolean isGreater(Pferd p);
     boolean isLess(Pferd p);

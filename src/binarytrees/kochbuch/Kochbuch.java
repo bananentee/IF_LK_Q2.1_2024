@@ -1,6 +1,6 @@
 package binarytrees.kochbuch;
 
-import abiklassen.binarytree.BinarySearchTree;
+import abiklassen.bin_tree.BinarySearchTree;
 import abiklassen.List;
 
 public class Kochbuch {

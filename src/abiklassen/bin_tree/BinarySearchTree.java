@@ -1,4 +1,4 @@
-package abiklassen.binarytree;
+package abiklassen.bin_tree;
 
 /**
  * <p>
@@ -15,7 +15,7 @@ package abiklassen.binarytree;
  * verwaltet ein Inhaltsobjekt sowie einen linken und einen rechten Teilbaum,
  * die ebenfalls Objekte der Klasse BinarySearchTree sind.<br />
  * Die Klasse der Objekte, die in dem Suchbaum verwaltet werden sollen, muss
- * das generische Interface ComparableContent implementieren. Dabei muss durch
+ * das generische Interface ComparableContentPferd implementieren. Dabei muss durch
  * Ueberschreiben der drei Vergleichsmethoden isLess, isEqual, isGreater (s.
  * Dokumentation des Interfaces) eine eindeutige Ordnungsrelation festgelegt
  * sein. <br />
