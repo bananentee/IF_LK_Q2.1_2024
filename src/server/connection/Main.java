@@ -5,8 +5,6 @@
 
 package server.connection;
 
-import abiklassen.network.Connection;
-
 public class Main {
 
     /* static methods */

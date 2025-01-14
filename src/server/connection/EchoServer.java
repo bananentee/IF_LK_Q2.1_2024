@@ -1,6 +1,5 @@
 package server.connection;
 
-import abiklassen.network.Connection;
 import abiklassen.network.Server;
 
 public class EchoServer extends Server {
