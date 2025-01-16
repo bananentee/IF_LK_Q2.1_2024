@@ -1,5 +1,6 @@
 package graphen.dijkstra;
 
+
 import abiklassen.List;
 import abiklassen.graph.Vertex;
 
