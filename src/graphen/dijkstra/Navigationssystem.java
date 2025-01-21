@@ -97,8 +97,8 @@ public class Navigationssystem {
             //////////////////
             // VORBEREITUNG //
             //////////////////
-
-            // TODO: Hier Code einfügen.
+            netz.setAllVertexMarks(false);
+            bereiteAbstandstabelleVor(von);
 
 
             // -----------------------------------------------------------------------------------------------------------
@@ -108,7 +108,13 @@ public class Navigationssystem {
             // BERECHNUNG DER KÜRZESTEN WEGE //
             ///////////////////////////////////
 
-            // TODO: Hier Code einfügen.
+            for (int i = 0; i < abstandstabelle.length; i++) {
+                List<Vertex> list = netz.getNeighbours(abstandstabelle[i].knoten);
+                list.toFirst();
+                while (list.hasAccess()) {
+
+                }
+            }
 
 
             // -----------------------------------------------------------------------------------------------------------
@@ -128,7 +134,7 @@ public class Navigationssystem {
          * Graphen einen {@link Wegabschnitt} an und initialisiert ihn mit <code>null</code> für den Vorgänger und dem
          * Wert unendlich (bzw. <code>Double.MAX_VALUE</code>).
          */
-        private void bereiteAbstandstabelleVor() {
+        private void bereiteAbstandstabelleVor(Vertex von) {
             int anzahlKnoten = 0;
             netz.getVertices().toFirst();
             while (netz.getVertices().hasAccess()) {
@@ -138,9 +144,13 @@ public class Navigationssystem {
             abstandstabelle = new Wegabschnitt[anzahlKnoten];
             netz.getVertices().toFirst();
             for (int i = 0; i < abstandstabelle.length; i++, netz.getVertices().next() /* ende Durchlauf abgespielt */) {
-                abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, Double.MAX_VALUE);
+                if (netz.getVertices().getContent() == von) {
+                    abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, 0d);
+                    tausche(i,0);
+                } else {
+                    abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, Double.MAX_VALUE);
+                }
             }
-
         }
 
         /**
@@ -149,7 +159,7 @@ public class Navigationssystem {
          * vorgesehen ist.
          *
          * @param vertex der Knoten, dessen Index bestimmt werden soll.
-         * @return der Index des gesuchten Knoten in der {@link #abstandstabelle}.
+         * @return der Index des gesuchten Knotens in der {@link #abstandstabelle}.
          * @throws IllegalArgumentException falls sich der gesuchte Knoten nicht in der {@link #abstandstabelle} befindet
          *                                  (was unmöglich sein sollte).
          */
