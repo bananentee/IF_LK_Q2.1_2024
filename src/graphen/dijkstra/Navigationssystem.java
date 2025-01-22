@@ -99,6 +99,10 @@ public class Navigationssystem {
             //////////////////
             netz.setAllVertexMarks(false);
             bereiteAbstandstabelleVor(von);
+            int tempIndex = 0;
+            Vertex currentA, currentB;
+            Edge currentEdge;
+            Wegabschnitt currentBAbschnitt;
 
 
             // -----------------------------------------------------------------------------------------------------------
@@ -109,10 +113,19 @@ public class Navigationssystem {
             ///////////////////////////////////
 
             for (int i = 0; i < abstandstabelle.length; i++) {
-                List<Vertex> list = netz.getNeighbours(abstandstabelle[i].knoten);
-                list.toFirst();
-                while (list.hasAccess()) {
-
+                currentA = abstandstabelle[i].knoten;
+                List<Vertex> nachbarKnoten = netz.getNeighbours(currentA);
+                nachbarKnoten.toFirst();
+                while (nachbarKnoten.hasAccess()) {
+                    currentB = nachbarKnoten.getContent();
+                    if (currentB.isMarked()) {
+                        nachbarKnoten.next();
+                    }
+                    currentEdge = netz.getEdge(currentA, currentB);
+                    tempIndex = sucheInAbstandstabelle(currentB);
+                    currentBAbschnitt = abstandstabelle[tempIndex];
+                    //TODO Berechnung des Weges
+                    nachbarKnoten.next();
                 }
             }
 
@@ -182,11 +195,18 @@ public class Navigationssystem {
          */
         private void sortiereAbstandstabelle(int start) {
 
-            for (int j = abstandstabelle.length; j > 1; j--) {
-                for (int i = start; i < j - 1; i++) {
+            boolean breakpoint = false;
+
+            for (int j = abstandstabelle.length - 2; j > 0; j--) {
+                breakpoint = true;
+                for (int i = start; i < j; i++) {
                     if (abstandstabelle[i].streckeBisHierHer > abstandstabelle[i + 1].streckeBisHierHer) {
+                        breakpoint = false;
                         tausche(i, i + 1);
                     }
+                }
+                if (breakpoint) {
+                    break;
                 }
             }
         }

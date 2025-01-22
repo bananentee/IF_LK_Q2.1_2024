@@ -23,5 +23,9 @@ public class Main {
             ergebnis.next();
         }
         System.out.println("ENDE");
+
+        for (int j = 7 - 2; j > 0; j--) {
+            System.out.println(j);
+        }
     }
 }
