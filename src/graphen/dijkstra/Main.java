@@ -1,8 +1,7 @@
 package graphen.dijkstra;
 
-
-import abiklassen.List;
 import abiklassen.graph.Vertex;
+import abiklassen.List;
 
 public class Main {
 
@@ -23,9 +22,5 @@ public class Main {
             ergebnis.next();
         }
         System.out.println("ENDE");
-
-        for (int j = 7 - 2; j > 0; j--) {
-            System.out.println(j);
-        }
     }
 }

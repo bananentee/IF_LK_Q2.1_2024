@@ -1,6 +1,5 @@
 package graphen.dijkstra;
 
-
 import abiklassen.List;
 import abiklassen.database.DatabaseConnector;
 import abiklassen.database.QueryResult;
@@ -39,7 +38,8 @@ public class Navigationssystem {
 
         for (int i = 0; i < data.length; i++) {
             for (int j = 0; j < data[0].length; j++) {
-                netz.addVertex(new Vertex(data[i][j]));
+                Vertex temp1 = new Vertex(data[i][j]);
+                netz.addVertex(temp1);
             }
         }
 
@@ -97,15 +97,10 @@ public class Navigationssystem {
             //////////////////
             // VORBEREITUNG //
             //////////////////
+
+
             netz.setAllVertexMarks(false);
             bereiteAbstandstabelleVor(von);
-            int tempIndex = 0;
-            Vertex currentA, currentB;
-            Edge currentEdge;
-            Wegabschnitt currentBAbschnitt;
-
-
-            // -----------------------------------------------------------------------------------------------------------
 
 
             ///////////////////////////////////
@@ -113,33 +108,36 @@ public class Navigationssystem {
             ///////////////////////////////////
 
             for (int i = 0; i < abstandstabelle.length; i++) {
-                currentA = abstandstabelle[i].knoten;
-                List<Vertex> nachbarKnoten = netz.getNeighbours(currentA);
+                Vertex currentVertex = abstandstabelle[i].knoten;
+                List<Vertex> nachbarKnoten = netz.getNeighbours(currentVertex);
+
                 nachbarKnoten.toFirst();
                 while (nachbarKnoten.hasAccess()) {
-                    currentB = nachbarKnoten.getContent();
-                    if (currentB.isMarked()) {
-                        nachbarKnoten.next();
+                    Vertex currentNeighbor = nachbarKnoten.getContent();
+                    if (!currentNeighbor.isMarked()) {
+                        Edge currentEdge = netz.getEdge(currentVertex, currentNeighbor);
+                        Wegabschnitt currentAbschnitt = abstandstabelle[sucheInAbstandstabelle(currentNeighbor)];
+
+                        double bisher = currentAbschnitt.streckeBisHierHer;
+                        double neu = abstandstabelle[i].streckeBisHierHer + currentEdge.getWeight();
+
+                        if (neu < bisher) {
+                            currentAbschnitt.vorgaenger = currentVertex;
+                            currentAbschnitt.streckeBisHierHer = neu;
+                        }
                     }
-                    currentEdge = netz.getEdge(currentA, currentB);
-                    tempIndex = sucheInAbstandstabelle(currentB);
-                    currentBAbschnitt = abstandstabelle[tempIndex];
-                    //TODO Berechnung des Weges
                     nachbarKnoten.next();
                 }
+                currentVertex.setMark(true);
+                sortiereAbstandstabelle(sucheInAbstandstabelle(currentVertex) + 1);
             }
-
-
-            // -----------------------------------------------------------------------------------------------------------
 
 
             //////////////////////////////////
             // AUFBEREITUNG DES ENDERGEBNIS //
             //////////////////////////////////
 
-            // TODO: Hier Code einfügen.
-
-            return null; // TODO: anpassen!
+            return erstelleErgebnisAusTabelle(nach);
         }
 
         /**
@@ -157,13 +155,39 @@ public class Navigationssystem {
             abstandstabelle = new Wegabschnitt[anzahlKnoten];
             netz.getVertices().toFirst();
             for (int i = 0; i < abstandstabelle.length; i++, netz.getVertices().next() /* ende Durchlauf abgespielt */) {
-                if (netz.getVertices().getContent() == von) {
+                if (netz.getVertices().getContent().equals(von)) {
                     abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, 0d);
                     tausche(i,0);
                 } else {
                     abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, Double.MAX_VALUE);
                 }
             }
+
+        }
+
+        /**
+         * Diese Hilfsmethode geht von hinten nach vorne durch die {@link #abstandstabelle} ('Backtracking') und erstellt
+         * anhand der jeweiligen Vorgänger den Weg vom Start- zum Zielknoten. Dieser Weg wird (in richtiger Reihenfolge)
+         * in einer Liste gespeichert und zurückgegeben.
+         *
+         * @param nach der Zielknoten, zu dem der Weg führen soll.
+         * @return ein Objekt vom Typ {@link List}, das alle Knoten ({@link Vertex}-Objekte) enthält, die den Weg zum
+         * Zielknoten beschreiben. Der Startknoten ist dabei automatisch das erste Element in der Tabelle.
+         */
+        private List<Vertex> erstelleErgebnisAusTabelle(Vertex nach) {
+
+            Vertex gesuchterKnoten = nach;
+            List<Vertex> ergebnis = new List<>();
+
+            for (int i = abstandstabelle.length - 1; i <= 0; i--) {
+                if (!abstandstabelle[i].knoten.equals(nach)) {
+                    continue;
+                }
+                ergebnis.append(gesuchterKnoten);
+                gesuchterKnoten = abstandstabelle[i].vorgaenger;
+            }
+
+            return ergebnis;
         }
 
         /**
@@ -197,7 +221,7 @@ public class Navigationssystem {
 
             boolean breakpoint = false;
 
-            for (int j = abstandstabelle.length - 2; j > 0; j--) {
+            for (int j = abstandstabelle.length - 1; j >= 0; j--) {
                 breakpoint = true;
                 for (int i = start; i < j; i++) {
                     if (abstandstabelle[i].streckeBisHierHer > abstandstabelle[i + 1].streckeBisHierHer) {
@@ -239,24 +263,25 @@ public class Navigationssystem {
             System.out.println("-----------------------------------------");
         }
 
-    }
+        /**
+         * Mithilfe dieser Klasse wird die bei der Ausführung des Dijkstra-Algorithmus entstehende Tabelle realisiert. Pro
+         * Konten im Graphen wird ein Objekt vom Typ <code>Wegabschnitt</code> angelegt und in einem Array verwaltet. Es
+         * enthält den jeweiligen {@link #knoten}, dessen {@link #vorgaenger} sowie die aufsummierte {@link #streckeBisHierHer}.
+         */
+        private class Wegabschnitt {
 
-    /**
-     * Mithilfe dieser Klasse wird die bei der Ausführung des Dijkstra-Algorithmus entstehende Tabelle realisiert. Pro
-     * Konten im Graphen wird ein Objekt vom Typ <code>Wegabschnitt</code> angelegt und in einem Array verwaltet. Es
-     * enthält den jeweiligen {@link #knoten}, dessen {@link #vorgaenger} sowie die aufsummierte {@link #streckeBisHierHer}.
-     */
-    private class Wegabschnitt {
+            private Vertex knoten;
+            private Vertex vorgaenger;
+            private double streckeBisHierHer;
 
-        private Vertex knoten;
-        private Vertex vorgaenger;
-        private double streckeBisHierHer;
-
-        public Wegabschnitt(Vertex knoten, Vertex vorgaenger, double streckeBisHierHer) {
-            this.knoten = knoten;
-            this.vorgaenger = vorgaenger;
-            this.streckeBisHierHer = streckeBisHierHer;
+            private Wegabschnitt(Vertex knoten, Vertex vorgaenger, double streckeBisHierHer) {
+                this.knoten = knoten;
+                this.vorgaenger = vorgaenger;
+                this.streckeBisHierHer = streckeBisHierHer;
+            }
         }
+
     }
+
 
 }
