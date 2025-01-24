@@ -11,6 +11,7 @@ public class Main {
         Navigationssystem navi = new Navigationssystem("Navigationssystem.db");
         Vertex start = navi.getNetz().getVertex("I");
         Vertex ziel = navi.getNetz().getVertex("O");
+        System.out.println(navi.getNetz().getVertex("I").getID());
 
         // Berechne den kürzesten Weg.
         List<Vertex> ergebnis = navi.berechneKuerzestenWeg(start, ziel);

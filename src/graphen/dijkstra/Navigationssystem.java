@@ -29,7 +29,7 @@ public class Navigationssystem {
         netz = new Graph();
         wegfinder = new Wegfinder();
 
-        DatabaseConnector connector = new DatabaseConnector(null, 0, datenbank, null, null);
+        DatabaseConnector connector = new DatabaseConnector(null, -1, datenbank, null, null);
 
         // Zuerst holen wir die Knoten aus der DB, wandeln sie in Objekt um und fügen sie dem Graphen hinzu.
         connector.executeStatement("SELECT * FROM Haltestellen");
@@ -57,6 +57,14 @@ public class Navigationssystem {
             gewicht = Double.parseDouble(data[i][2]);
             netz.addEdge(new Edge(knoten1, knoten2, gewicht));
         }
+
+//        List <Edge> list = netz.getEdges();
+//        list.toFirst();
+//        while (list.hasAccess()) {
+//            System.out.println(list.getContent().getWeight());
+//            list.next();
+//        }
+
 
     }
 
@@ -147,19 +155,21 @@ public class Navigationssystem {
          */
         private void bereiteAbstandstabelleVor(Vertex von) {
             int anzahlKnoten = 0;
-            netz.getVertices().toFirst();
-            while (netz.getVertices().hasAccess()) {
+            List <Vertex> allVertices = netz.getVertices();
+            allVertices.toFirst();
+            while (allVertices.hasAccess()) {
                 anzahlKnoten++;
-                netz.getVertices().next();
+                allVertices.next();
             }
             abstandstabelle = new Wegabschnitt[anzahlKnoten];
-            netz.getVertices().toFirst();
+            allVertices.toFirst();
             for (int i = 0; i < abstandstabelle.length; i++, netz.getVertices().next() /* ende Durchlauf abgespielt */) {
-                if (netz.getVertices().getContent().equals(von)) {
-                    abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, 0d);
+                Vertex currentVertex = allVertices.getContent();
+                if (currentVertex.getID().equals(von.getID())) {
+                    abstandstabelle[i] = new Wegabschnitt(currentVertex, null, 0d);
                     tausche(i,0);
                 } else {
-                    abstandstabelle[i] = new Wegabschnitt(netz.getVertices().getContent(), null, Double.MAX_VALUE);
+                    abstandstabelle[i] = new Wegabschnitt(currentVertex, null, Double.MAX_VALUE);
                 }
             }
 
@@ -202,7 +212,7 @@ public class Navigationssystem {
          */
         private int sucheInAbstandstabelle(Vertex vertex) {
             for (int i = 0; i < abstandstabelle.length; i++) {
-                if (vertex.equals(abstandstabelle[i].knoten)) {
+                if (vertex.getID().equals(abstandstabelle[i].knoten.getID())) {
                     return i;
                 }
             }
