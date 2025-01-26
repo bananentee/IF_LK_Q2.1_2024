@@ -10,7 +10,7 @@ import abiklassen.graph.Vertex;
 /**
  * Eine Implementation des Dijkstra-Algorithmus für die Abiturklassen ab 2018.
  *
- * @author Michel May
+ * @author Sven Ibe
  * @version 1.0
  */
 public class Navigationssystem {
@@ -20,8 +20,8 @@ public class Navigationssystem {
     /* Statische Methoden */
 
     /* Objektvariablen / Attribute */
-    private Graph netz;
-    private Wegfinder wegfinder;
+    private final Graph netz;
+    private final Wegfinder wegfinder;
 
     /* Konstruktoren */
     public Navigationssystem(String datenbank) {
@@ -36,9 +36,9 @@ public class Navigationssystem {
         QueryResult result = connector.getCurrentQueryResult();
         String[][] data = result.getData();
 
-        for (int i = 0; i < data.length; i++) {
+        for (String[] strings : data) {
             for (int j = 0; j < data[0].length; j++) {
-                Vertex temp1 = new Vertex(data[i][j]);
+                Vertex temp1 = new Vertex(strings[j]);
                 netz.addVertex(temp1);
             }
         }
@@ -51,20 +51,12 @@ public class Navigationssystem {
         Vertex knoten1, knoten2;
         double gewicht;
 
-        for (int i = 0; i < data.length; i++) {
-            knoten1 = netz.getVertex(data[i][0]);
-            knoten2 = netz.getVertex(data[i][1]);
-            gewicht = Double.parseDouble(data[i][2]);
+        for (String[] datum : data) {
+            knoten1 = netz.getVertex(datum[0]);
+            knoten2 = netz.getVertex(datum[1]);
+            gewicht = Double.parseDouble(datum[2]);
             netz.addEdge(new Edge(knoten1, knoten2, gewicht));
         }
-
-//        List <Edge> list = netz.getEdges();
-//        list.toFirst();
-//        while (list.hasAccess()) {
-//            System.out.println(list.getContent().getWeight());
-//            list.next();
-//        }
-
 
     }
 
@@ -78,7 +70,8 @@ public class Navigationssystem {
         return netz;
     }
 
-    private class Wegfinder {
+
+    class Wegfinder {
 
         /**
          * Dieses Attribut stellt die Tabelle des Dijkstra-Algorithmus dar. Pro Knoten des Graphen erfolgt ein Eintrag,
@@ -102,33 +95,41 @@ public class Navigationssystem {
          */
         public List<Vertex> berechneKuerzestenWeg(Vertex von, Vertex nach) {
 
-            //////////////////
-            // VORBEREITUNG //
-            //////////////////
-
+            /* VORBEREITUNG */
 
             netz.setAllVertexMarks(false);
             bereiteAbstandstabelleVor(von);
 
+            // Feedback für den User
+            System.out.println("Berechnung des Weges von Knoten " + von.getID() + " bis Knoten " + nach.getID());
+            System.out.println("-----------------------------------------------");
 
-            ///////////////////////////////////
-            // BERECHNUNG DER KÜRZESTEN WEGE //
-            ///////////////////////////////////
 
-            for (int i = 0; i < abstandstabelle.length; i++) {
-                Vertex currentVertex = abstandstabelle[i].knoten;
+            /* BERECHNUNG DER KÜRZESTEN WEGE */
+
+            // gehe durch alle gespeicherten Knoten
+            for (Wegabschnitt wegabschnitt : abstandstabelle) {
+                Vertex currentVertex = wegabschnitt.knoten;
+                // speichere alle Nachbarknoten des aktuellen Knotens in eine Liste
                 List<Vertex> nachbarKnoten = netz.getNeighbours(currentVertex);
 
+                // gehe durch alle Nachbarknoten vom aktuellen Knoten in der Abstandstabelle
                 nachbarKnoten.toFirst();
                 while (nachbarKnoten.hasAccess()) {
                     Vertex currentNeighbor = nachbarKnoten.getContent();
+                    // falls der aktuelle Nachbarknoten noch nicht abgearbeitet wurde
                     if (!currentNeighbor.isMarked()) {
+                        // gib die Kante zwischen den aktuellen Knoten und seinem Nachbarn
                         Edge currentEdge = netz.getEdge(currentVertex, currentNeighbor);
+                        // suche in der Abstandstabelle nach dem Index des Wegabschnitt-Objekts und speichere ihn
                         Wegabschnitt currentAbschnitt = abstandstabelle[sucheInAbstandstabelle(currentNeighbor)];
 
+                        // berechne den neuen Weg mit dem Kantengewicht und dem derzeitigen benötigtem Gewicht
                         double bisher = currentAbschnitt.streckeBisHierHer;
-                        double neu = abstandstabelle[i].streckeBisHierHer + currentEdge.getWeight();
+                        double neu = wegabschnitt.streckeBisHierHer + currentEdge.getWeight();
 
+                        // falls der neu berechnete Weg besser ist als der Alte, trage einen neuen Vorgänger ein
+                        // und aktualisiere streckeBisHierHer mit dem neuen Weg
                         if (neu < bisher) {
                             currentAbschnitt.vorgaenger = currentVertex;
                             currentAbschnitt.streckeBisHierHer = neu;
@@ -136,15 +137,16 @@ public class Navigationssystem {
                     }
                     nachbarKnoten.next();
                 }
+                // markiere den aktuellen Knoten als abgearbeitet
                 currentVertex.setMark(true);
+                // sortiere die Abstandstabelle um, sodass der abgearbeitete Knoten hinten landet
                 sortiereAbstandstabelle(sucheInAbstandstabelle(currentVertex) + 1);
             }
 
 
-            //////////////////////////////////
-            // AUFBEREITUNG DES ENDERGEBNIS //
-            //////////////////////////////////
+            /* AUFBEREITUNG DES ENDERGEBNIS */
 
+            // gib das Ergebnis mit den jeweiligen Vorgängerknoten aus
             return erstelleErgebnisAusTabelle(nach);
         }
 
@@ -155,22 +157,25 @@ public class Navigationssystem {
          */
         private void bereiteAbstandstabelleVor(Vertex von) {
             int anzahlKnoten = 0;
-            List <Vertex> allVertices = netz.getVertices();
+            List<Vertex> allVertices = netz.getVertices();
             allVertices.toFirst();
             while (allVertices.hasAccess()) {
                 anzahlKnoten++;
                 allVertices.next();
             }
+
             abstandstabelle = new Wegabschnitt[anzahlKnoten];
             allVertices.toFirst();
-            for (int i = 0; i < abstandstabelle.length; i++, netz.getVertices().next() /* ende Durchlauf abgespielt */) {
+
+            for (int i = 0; i < abstandstabelle.length; i++) {
                 Vertex currentVertex = allVertices.getContent();
                 if (currentVertex.getID().equals(von.getID())) {
                     abstandstabelle[i] = new Wegabschnitt(currentVertex, null, 0d);
-                    tausche(i,0);
+                    tausche(i, 0);
                 } else {
                     abstandstabelle[i] = new Wegabschnitt(currentVertex, null, Double.MAX_VALUE);
                 }
+                allVertices.next();
             }
 
         }
@@ -189,14 +194,16 @@ public class Navigationssystem {
             Vertex gesuchterKnoten = nach;
             List<Vertex> ergebnis = new List<>();
 
-            for (int i = abstandstabelle.length - 1; i <= 0; i--) {
-                if (!abstandstabelle[i].knoten.equals(nach)) {
+            for (int i = abstandstabelle.length - 1; i > -1; i--) {
+                if (!abstandstabelle[i].knoten.equals(gesuchterKnoten)) {
                     continue;
                 }
                 ergebnis.append(gesuchterKnoten);
                 gesuchterKnoten = abstandstabelle[i].vorgaenger;
             }
-
+            // gib die Gesamtkosten des Ziel-Knotens an
+            System.out.println("Benötigte Kosten bis " + nach.getID() + ": " +
+                    Math.round(abstandstabelle[sucheInAbstandstabelle(nach)].streckeBisHierHer));
             return ergebnis;
         }
 
@@ -220,16 +227,16 @@ public class Navigationssystem {
         }
 
         /**
-         * Diese Methode sortiert das Array <code>abstandstabelle</code> aufsteigend und verwendet hierbei den BubbleSort-
-         * Algorithmus. Es beginnt beim übergebenen Parameter, lässt also alle Elemente 'links davon' unberührt. Der Algo-
-         * rithmus bricht automatisch ab, sofern er bei einem Durchlauf keine Tauschoperationen mehr durchgeführt hat, das
-         * Array also sortiert ist.
+         * Diese Methode sortiert das Array <code>abstandstabelle</code> aufsteigend und verwendet hierbei den BubbleSort
+         * Algorithmus. Es beginnt beim übergebenen Parameter, lässt also alle Elemente 'links davon' unberührt. Der
+         * Algorithmus bricht automatisch ab, sofern er bei einem Durchlauf keine Tauschoperationen mehr durchgeführt hat,
+         * das Array also sortiert ist.
          *
          * @param start der Start-Index, ab dem sortiert werden soll.
          */
         private void sortiereAbstandstabelle(int start) {
 
-            boolean breakpoint = false;
+            boolean breakpoint;
 
             for (int j = abstandstabelle.length - 1; j >= 0; j--) {
                 breakpoint = true;
@@ -257,21 +264,6 @@ public class Navigationssystem {
             abstandstabelle[b] = temp;
         }
 
-        /**
-         * Diese Hilfsmethode gibt den aktuellen Stand der {@link #abstandstabelle} aus und dient einzig dem Debugging.
-         */
-        private void printAbstandstabelle() {
-
-            Wegabschnitt tmp;
-
-            for (int j = 0; j < abstandstabelle.length; j++) {
-                tmp = abstandstabelle[j];
-                System.out.println(tmp.knoten.getID() + ", "
-                        + (tmp.vorgaenger != null ? tmp.vorgaenger.getID() : "null")
-                        + " -> " + tmp.streckeBisHierHer);
-            }
-            System.out.println("-----------------------------------------");
-        }
 
         /**
          * Mithilfe dieser Klasse wird die bei der Ausführung des Dijkstra-Algorithmus entstehende Tabelle realisiert. Pro
@@ -280,7 +272,7 @@ public class Navigationssystem {
          */
         private class Wegabschnitt {
 
-            private Vertex knoten;
+            private final Vertex knoten;
             private Vertex vorgaenger;
             private double streckeBisHierHer;
 
@@ -292,6 +284,5 @@ public class Navigationssystem {
         }
 
     }
-
 
 }
