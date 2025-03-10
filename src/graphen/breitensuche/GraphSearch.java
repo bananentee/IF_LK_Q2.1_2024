@@ -10,27 +10,21 @@ import abiklassen.Queue;
 import abiklassen.graph.Graph;
 import abiklassen.graph.Vertex;
 
-public class Breitensuche {
-
-    /* static variables */
-
-
+public class GraphSearch {
 
     /* static methods */
     public static void main(String[] args) {
-        new Breitensuche().breitenSuche("Anna");
+        new GraphSearch().breitenSuche("Anna");
     }
 
-
     /* attributes */
-    private Graph netz;
+    private final Graph netz;
 
     /* constructors */
-    public Breitensuche() {
+    public GraphSearch() {
         netz = new Graph();
         netz.addVertex(new Person("Anna", -1));
         netz.addVertex(new Person("Bernd", -1));
-
     }
 
     /* object methods */
@@ -39,30 +33,37 @@ public class Breitensuche {
         netz.setAllVertexMarks(false);
         Vertex startKnoten = netz.getVertex(startKnotenID);
         startKnoten.setMark(true);
-        Queue<Vertex> queue = new Queue<>();
-        queue.enqueue(startKnoten);
+        Queue<Vertex> s = new Queue<>();
+        s.enqueue(startKnoten);
 
-        while (!queue.isEmpty()) {
-            Vertex k = queue.front();
+        while (!s.isEmpty()) {
+            Vertex k = s.front();
             List<Vertex> nachbarKnoten = netz.getNeighbours(k);
             nachbarKnoten.toFirst();
             while (nachbarKnoten.hasAccess()) {
-                // TODO Bekanntheitsgrad ermitteln!
                 if (!nachbarKnoten.getContent().isMarked()) {
                     nachbarKnoten.getContent().setMark(true);
-                    queue.enqueue(nachbarKnoten.getContent());
+                    s.enqueue(nachbarKnoten.getContent());
                 }
                 nachbarKnoten.next();
             }
         }
 
-        // debugging
-        while (!queue.isEmpty()) {
-            System.out.println(queue.front().getID());
-            queue.dequeue();
-        }
     }
 
-    /* getter & setter */
+    public void tiefenSuche(String startKnotenID) {
+        netz.setAllVertexMarks(false);
+        Vertex startKnoten = netz.getVertex(startKnotenID);
+        startKnoten.setMark(true);
+        List<Vertex> neighbours = netz.getNeighbours(startKnoten);
+
+        neighbours.toFirst();
+        while (neighbours.hasAccess()) {
+            if (!neighbours.getContent().isMarked()) {
+                tiefenSuche(neighbours.getContent().getID());
+            }
+        }
+
+    }
 
 }
